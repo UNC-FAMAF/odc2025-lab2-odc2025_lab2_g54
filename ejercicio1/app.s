@@ -1,53 +1,91 @@
-	.equ SCREEN_WIDTH, 		640
-	.equ SCREEN_HEIGH, 		480
-	.equ BITS_PER_PIXEL,  	32
+.include "constants.s"
+.include "shapes.s"
 
-	.equ GPIO_BASE,      0x3f200000
-	.equ GPIO_GPFSEL0,   0x00
-	.equ GPIO_GPLEV0,    0x34
-
-	.globl main
+.globl main
 
 main:
-	// x0 contiene la direccion base del framebuffer
- 	mov x20, x0	// Guarda la dirección base del framebuffer en x20
-	//---------------- CODE HERE ------------------------------------
+  mov x20, x0          // x0 contiene framebuffer
 
-	movz x10, 0xC7, lsl 16
-	movk x10, 0x1585, lsl 00
+  // Llenar pantalla con degradado
+  mov x0, x20          // framebuffer (64 bits)
+  ldr w1, =TWILIGHT_PURPLE        // color base (32 bits)
+  ldr w2, =SUNSET_PEACH           // ajustar cada 4 filas (32 bits)
+  bl fillscreen_gradient_color_to_color
 
-	mov x2, SCREEN_HEIGH         // Y Size
-loop1:
-	mov x1, SCREEN_WIDTH         // X Size
-loop0:
-	stur w10,[x0]  // Colorear el pixel N
-	add x0,x0,4	   // Siguiente pixel
-	sub x1,x1,1	   // Decrementar contador X
-	cbnz x1,loop0  // Si no terminó la fila, salto
-	sub x2,x2,1	   // Decrementar contador Y
-	cbnz x2,loop1  // Si no es la última fila, salto
+  mov x0, x20
+  ldr w1, =SNOW
+  mov x2, #0             // X position
+  mov x3, #0             // Y position
+  mov x4, #640           // Width
+  mov x5, #480           // Height
+  mov x6, #200          // Densidad de estrellas
+  bl drawstars
 
-	// Ejemplo de uso de gpios
-	mov x9, GPIO_BASE
+   // Dibujar sol (círculo relleno)
+  mov x0, x20
+  ldr w1, =SUNSET_PEACH     // color cálido del sol
+  mov x2, #320              // centro x (asumiendo 640x480)
+  mov x3, #240              // centro y
+  mov x4, #80               // radio x
+  mov x5, #80               // radio y
+  mov w7, #1                // fill = true
+  mov w8, #0                // grosor ignorado
+  bl drawellipse
 
-	// Atención: se utilizan registros w porque la documentación de broadcom
-	// indica que los registros que estamos leyendo y escribiendo son de 32 bits
+   // Dibujar sol (círculo relleno)
+  mov x0, x20
+  ldr w1, =SUNGLOW     // color cálido del sol
+  mov x2, #320              // centro x (asumiendo 640x480)
+  mov x3, #240              // centro y
+  mov x4, #75               // radio x
+  mov x5, #75               // radio y
+  mov w7, #1                // fill = true
+  mov w8, #0                // grosor ignorado
+  bl drawellipse
 
-	// Setea gpios 0 - 9 como lectura
-	str wzr, [x9, GPIO_GPFSEL0]
 
-	// Lee el estado de los GPIO 0 - 31
-	ldr w10, [x9, GPIO_GPLEV0]
+  mov x0, x20
+  ldr w1, =SEA              // azul muy oscuro, como mar al atardecer
+  ldr w2, =SEA_DEEP              // azul muy oscuro, como mar al atardecer
+  mov x3, #0             // X position
+  mov x4, #260              // Y position
+  mov x5, #640             // Width
+  mov x6, #220             // Height
+  bl drawsquare_gradient
 
-	// And bit a bit mantiene el resultado del bit 2 en w10
-	and w11, w10, 0b10
+  mov x0, x20
+  ldr w1, =BLUEGRAY
+  mov x2, #0             // X position
+  mov x3, #260             // Y position
+  mov x4, #640           // Width
+  mov x5, #220           // Height
+  mov x6, #200          // Densidad de estrellas
+  bl drawstars
 
-	// w11 será 1 si había un 1 en la posición 2 de w10, si no será 0
-	// efectivamente, su valor representará si GPIO 2 está activo
-	lsr w11, w11, 1
 
-	//---------------------------------------------------------------
-	// Infinite Loop
+  ldr w0, =SUNGLOW
+  mov w1, #150
+  bl adjust_color_brightness
+  mov w1, w0
+
+  // Dibujar reflejo del sol en el mar (elipse ancha y baja)
+  mov x0, x20
+  mov x2, #320                // centro x (mismo que sol)
+  mov x3, #275                // centro y (justo arriba del mar)
+  mov x4, #100                // radio x (más ancho)
+  mov x5, #20                 // radio y (bajo, aplanado)
+  mov w7, #1                  // fill = true
+  mov w8, #0                  // grosor ignorado
+  bl drawellipse
+
+  // Setear GPIOs como entrada
+  ldr x9, =GPIO_BASE
+  str wzr, [x9, GPIO_GPFSEL0]
+
+  // Leer GPIO 2
+  ldr w10, [x9, GPIO_GPLEV0]
+  and w11, w10, 0b100
+  lsr w11, w11, 2  // w11 = 0 o 1 dependiendo del estado de GPIO 2
 
 InfLoop:
-	b InfLoop
+  b InfLoop
