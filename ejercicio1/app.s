@@ -1,5 +1,6 @@
 .include "constants.s"
 .include "shapes.s"
+.include "letters.s"
 
 .globl main
 
@@ -77,6 +78,46 @@ main:
   mov w7, #1                  // fill = true
   mov w8, #0                  // grosor ignorado
   bl drawellipse
+
+  mov x0, x20                // destino
+  ldr w1, =SNOW         // color ARGB
+
+  // Letra 'O'
+  mov x2, #150               // x
+  mov x3, #50                // y
+  ldr x4, =O_font
+  mov x5, #4
+  bl drawchar_direct
+
+  // Letra 'D'
+  mov x2, #200               // x + 10
+  ldr x4, =D_font
+  bl drawchar_direct
+
+  // Letra 'C'
+  mov x2, #250               // x + 20
+  ldr x4, =C_font
+  bl drawchar_direct
+
+  // Número '2'
+  mov x2, #300               // x + 40
+  ldr x4, =Two_font
+  bl drawchar_direct
+
+  // Número '0'
+  mov x2, #350               // x + 50
+  ldr x4, =Zero_font
+  bl drawchar_direct
+
+  // Número '2'
+  mov x2, #400               // x + 60
+  ldr x4, =Two2_font         // o reutilizar Two_font
+  bl drawchar_direct
+
+  // Número '5'
+  mov x2, #450               // x + 70
+  ldr x4, =Five_font
+  bl drawchar_direct
 
   // Setear GPIOs como entrada
   ldr x9, =GPIO_BASE

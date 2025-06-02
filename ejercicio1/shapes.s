@@ -5,3 +5,4 @@
 .include "shapes/fill.s"
 .include "shapes/square.s"
 .include "shapes/star.s"
+.include "shapes/font.s"
