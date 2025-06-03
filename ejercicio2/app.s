@@ -15,6 +15,7 @@ main:
   ldr w16, =SEA_DEEP               // color de ajuste del mar (32 bits)
   ldr w17, =SUNREFLECTION          // color del reflejo del sol (32 bits)
   mov x18, #20                     // altura del sol (radio y)
+  ldr w21, =BLUEGRAY              // color del agua en movimiento (32 bits)
 
 animloop:
   // Llenar pantalla con degradado
@@ -22,15 +23,6 @@ animloop:
   mov w1, w12
   mov w2, w13
   bl fillscreen_gradient_color_to_color
-
-  mov x0, x20
-  ldr w1, =SNOW
-  mov x2, #0
-  mov x3, #0
-  mov x4, #640
-  mov x5, #480
-  mov x6, #200
-  bl drawstars
 
   // Dibujar sol (dos círculos concéntricos para efecto)
   mov x0, x20
@@ -63,14 +55,14 @@ animloop:
   mov x6, #220
   bl drawsquare_gradient
 
-  // Estrellas en el mar (como reflejos)
+  // movimiento del agua
   mov x0, x20
-  ldr w1, =BLUEGRAY
+  mov w1, w21
   mov x2, #0
   mov x3, #260
   mov x4, #640
   mov x5, #220
-  mov x6, #200
+  mov x6, #1000
   bl drawstars
 
   // Reflejo del sol
@@ -118,13 +110,6 @@ animloop:
   ldr x4, =Five_font
   bl drawchar_direct
 
-  // Incrementar contador de frames
-  add x19, x19, #1
-
-  // Pequeño delay entre frames
-  mov x0, #20
-  bl delay
-
   // Atenuar colores
   mov w0, w12
   mov w1, #126
@@ -151,6 +136,12 @@ animloop:
   bl adjust_color_brightness
   mov w17, w0
 
+  mov w0, w21
+  mov w1, #126
+  bl adjust_color_brightness
+  mov w21, w0
+
+
   // Mover el sol hacia abajo
   add x14, x14, #1
 
@@ -159,6 +150,13 @@ animloop:
   cbnz x3, skip_sun_height
   sub x18, x18, #1
 skip_sun_height:
+
+   // Incrementar contador de frames
+  add x19, x19, #1
+
+  // Pequeño delay entre frames
+  mov x0, #40
+  bl delay
 
   // Repetir animación hasta 100 frames
   cmp x19, #100
