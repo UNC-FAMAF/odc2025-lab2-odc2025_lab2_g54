@@ -167,7 +167,205 @@ skip_sun_height:
   cmp x19, #120
   b.lt animloop
 
-  b endanim
+  b outroanim
+
+
+outroanim:
+  mov x19, #0          // Reiniciar contador de frames
+  mov x12, #0          // Tamaño del radio del circulo
+  mov x13, #50         // Posicion de las letras
+  mov x14, #0          // Posición de "LegV8" cayendo
+
+animloop_outro:
+  mov x1, x21
+  mov x2, x20
+  bl render
+
+  mov x0, x21
+  ldr w1, =BLACK
+  bl fillscreen
+
+  mov x0, x21
+  ldr w1, =SNOW
+
+  mov x2, #150
+  mov x3, x13
+  ldr x4, =O_font
+  mov x5, #4
+  bl drawchar_direct
+
+  mov x2, #200
+  ldr x4, =D_font
+  bl drawchar_direct
+
+  mov x2, #250
+  ldr x4, =C_font
+  bl drawchar_direct
+
+  mov x2, #300
+  ldr x4, =Two_font
+  bl drawchar_direct
+
+  mov x2, #350
+  ldr x4, =Zero_font
+  bl drawchar_direct
+
+  mov x2, #400
+  ldr x4, =Two2_font
+  bl drawchar_direct
+
+  mov x2, #450
+  ldr x4, =Five_font
+  bl drawchar_direct
+
+  mov x0, #5
+  bl delay
+
+  add x13, x13, #1
+  cmp x13, #240
+  b.lt animloop_outro
+
+  b circle_growing
+
+circle_growing:
+  mov x1, x21
+  mov x2, x20
+  bl render
+
+  mov x0, x21
+  ldr w1, =SUNGLOW
+  mov x2, #320
+  mov x3, #240
+  mov x4, x12
+  mov x5, x12
+  mov w7, #1
+  mov w8, #0
+  bl drawellipse
+
+  mov x0, x21
+  ldr w1, =SNOW
+
+  mov x2, #150
+  mov x3, x13
+  ldr x4, =O_font
+  mov x5, #4
+  bl drawchar_direct
+
+  mov x2, #200
+  ldr x4, =D_font
+  bl drawchar_direct
+
+  mov x2, #250
+  ldr x4, =C_font
+  bl drawchar_direct
+
+  mov x2, #300
+  ldr x4, =Two_font
+  bl drawchar_direct
+
+  mov x2, #350
+  ldr x4, =Zero_font
+  bl drawchar_direct
+
+  mov x2, #400
+  ldr x4, =Two2_font
+  bl drawchar_direct
+
+  mov x2, #450
+  ldr x4, =Five_font
+  bl drawchar_direct
+
+  mov x0, #0
+  bl delay
+
+  add x12, x12, #1
+  cmp x12, #410
+  b.lt circle_growing
+
+  b legv8_falling
+
+legv8_falling:
+  mov x1, x21
+  mov x2, x20
+  bl render
+
+  // Dibujar el círculo lleno
+  mov x0, x21
+  ldr w1, =SUNGLOW
+  mov x2, #320
+  mov x3, #240
+  mov x4, x12
+  mov x5, x12
+  mov w7, #1
+  mov w8, #0
+  bl drawellipse
+
+  // Dibuja "ODC 2025"
+  mov x0, x21
+  ldr w1, =SNOW
+
+  mov x2, #150
+  mov x3, x13
+  ldr x4, =O_font
+  mov x5, #4
+  bl drawchar_direct
+
+  mov x2, #200
+  ldr x4, =D_font
+  bl drawchar_direct
+
+  mov x2, #250
+  ldr x4, =C_font
+  bl drawchar_direct
+
+  mov x2, #300
+  ldr x4, =Two_font
+  bl drawchar_direct
+
+  mov x2, #350
+  ldr x4, =Zero_font
+  bl drawchar_direct
+
+  mov x2, #400
+  ldr x4, =Two2_font
+  bl drawchar_direct
+
+  mov x2, #450
+  ldr x4, =Five_font
+  bl drawchar_direct
+
+  // Dibuja "LegV8" cayendo
+  mov x2, #180
+  mov x3, x14
+  ldr x4, =L_font
+  mov x5, #4
+  bl drawchar_direct
+
+  mov x2, #230
+  ldr x4, =E_font
+  bl drawchar_direct
+
+  mov x2, #280
+  ldr x4, =G_font
+  bl drawchar_direct
+
+  mov x2, #330
+  ldr x4, =V_font
+  bl drawchar_direct
+
+  mov x2, #380
+  ldr x4, =Eight_font
+  bl drawchar_direct
+
+  mov x0, #2
+  bl delay
+
+  // Hacer que "LegV8" caiga hasta una altura fija
+  sub x15, x13, #40
+  cmp x14, x15
+  b.ge endanim
+  add x14, x14, #1    // velocidad de caída
+  b legv8_falling
 
 endanim:
   // Setear GPIOs como entrada

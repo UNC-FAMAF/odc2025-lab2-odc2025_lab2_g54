@@ -1,4 +1,5 @@
 // Color Palette
+.equ BLACK,          0xFF000000
 .equ CHARCOAL,       0xFF2B2B2B
 .equ ASH_GRAY,       0xFF6D6D6D
 .equ SNOW,           0xFFF8F8F8
