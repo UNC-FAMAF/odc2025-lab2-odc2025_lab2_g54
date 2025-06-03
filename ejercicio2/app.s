@@ -1,53 +1,180 @@
-	.equ SCREEN_WIDTH, 		640
-	.equ SCREEN_HEIGH, 		480
-	.equ BITS_PER_PIXEL,  	32
+.include "constants.s"
+.include "shapes.s"
+.include "letters.s"
 
-	.equ GPIO_BASE,      0x3f200000
-	.equ GPIO_GPFSEL0,   0x00
-	.equ GPIO_GPLEV0,    0x34
-
-	.globl main
+.globl main
 
 main:
-	// x0 contiene la direccion base del framebuffer
- 	mov x20, x0	// Guarda la dirección base del framebuffer en x20
-	//---------------- CODE HERE ------------------------------------
+  mov x20, x0          // x0 contiene framebuffer
+  mov x19, #0          // contador de fotogramas
 
-	movz x10, 0xC7, lsl 16
-	movk x10, 0x1585, lsl 00
+  ldr w12, =TWILIGHT_PURPLE        // color base (32 bits)
+  ldr w13, =SUNSET_PEACH           // color de ajuste (32 bits)
+  mov x14, #240                    // posicion inicial del sol
+  ldr w15, =SEA                    // color inicial del mar (32 bits)
+  ldr w16, =SEA_DEEP               // color de ajuste del mar (32 bits)
+  ldr w17, =SUNREFLECTION          // color del reflejo del sol (32 bits)
+  mov x18, #20                     // altura del sol (radio y)
 
-	mov x2, SCREEN_HEIGH         // Y Size
-loop1:
-	mov x1, SCREEN_WIDTH         // X Size
-loop0:
-	stur w10,[x0]  // Colorear el pixel N
-	add x0,x0,4	   // Siguiente pixel
-	sub x1,x1,1	   // Decrementar contador X
-	cbnz x1,loop0  // Si no terminó la fila, salto
-	sub x2,x2,1	   // Decrementar contador Y
-	cbnz x2,loop1  // Si no es la última fila, salto
+animloop:
+  // Llenar pantalla con degradado
+  mov x0, x20
+  mov w1, w12
+  mov w2, w13
+  bl fillscreen_gradient_color_to_color
 
-	// Ejemplo de uso de gpios
-	mov x9, GPIO_BASE
+  mov x0, x20
+  ldr w1, =SNOW
+  mov x2, #0
+  mov x3, #0
+  mov x4, #640
+  mov x5, #480
+  mov x6, #200
+  bl drawstars
 
-	// Atención: se utilizan registros w porque la documentación de broadcom
-	// indica que los registros que estamos leyendo y escribiendo son de 32 bits
+  // Dibujar sol (dos círculos concéntricos para efecto)
+  mov x0, x20
+  ldr w1, =SUNSET_PEACH
+  mov x2, #320
+  mov x3, x14
+  mov x4, #80
+  mov x5, #80
+  mov w7, #1
+  mov w8, #0
+  bl drawellipse
 
-	// Setea gpios 0 - 9 como lectura
-	str wzr, [x9, GPIO_GPFSEL0]
+  mov x0, x20
+  ldr w1, =SUNGLOW
+  mov x2, #320
+  mov x3, x14
+  mov x4, #75
+  mov x5, #75
+  mov w7, #1
+  mov w8, #0
+  bl drawellipse
 
-	// Lee el estado de los GPIO 0 - 31
-	ldr w10, [x9, GPIO_GPLEV0]
+  // Mar con degradado
+  mov x0, x20
+  mov w1, w15
+  mov w2, w16
+  mov x3, #0
+  mov x4, #260
+  mov x5, #640
+  mov x6, #220
+  bl drawsquare_gradient
 
-	// And bit a bit mantiene el resultado del bit 2 en w10
-	and w11, w10, 0b10
+  // Estrellas en el mar (como reflejos)
+  mov x0, x20
+  ldr w1, =BLUEGRAY
+  mov x2, #0
+  mov x3, #260
+  mov x4, #640
+  mov x5, #220
+  mov x6, #200
+  bl drawstars
 
-	// w11 será 1 si había un 1 en la posición 2 de w10, si no será 0
-	// efectivamente, su valor representará si GPIO 2 está activo
-	lsr w11, w11, 1
+  // Reflejo del sol
+  mov x0, x20
+  mov w1, w17
+  mov x2, #320
+  mov x3, #275
+  mov x4, #100
+  mov x5, x18
+  mov w7, #1
+  mov w8, #0
+  bl drawellipse
 
-	//---------------------------------------------------------------
-	// Infinite Loop
+  // Texto "ODC2025"
+  mov x0, x20
+  ldr w1, =SNOW
+
+  mov x2, #150
+  mov x3, #50
+  ldr x4, =O_font
+  mov x5, #4
+  bl drawchar_direct
+
+  mov x2, #200
+  ldr x4, =D_font
+  bl drawchar_direct
+
+  mov x2, #250
+  ldr x4, =C_font
+  bl drawchar_direct
+
+  mov x2, #300
+  ldr x4, =Two_font
+  bl drawchar_direct
+
+  mov x2, #350
+  ldr x4, =Zero_font
+  bl drawchar_direct
+
+  mov x2, #400
+  ldr x4, =Two2_font
+  bl drawchar_direct
+
+  mov x2, #450
+  ldr x4, =Five_font
+  bl drawchar_direct
+
+  // Incrementar contador de frames
+  add x19, x19, #1
+
+  // Pequeño delay entre frames
+  mov x0, #20
+  bl delay
+
+  // Atenuar colores
+  mov w0, w12
+  mov w1, #126
+  bl adjust_color_brightness
+  mov w12, w0
+
+  mov w0, w13
+  mov w1, #126
+  bl adjust_color_brightness
+  mov w13, w0
+
+  mov w0, w15
+  mov w1, #126
+  bl adjust_color_brightness
+  mov w15, w0
+
+  mov w0, w16
+  mov w1, #126
+  bl adjust_color_brightness
+  mov w16, w0
+
+  mov w0, w17
+  mov w1, #126
+  bl adjust_color_brightness
+  mov w17, w0
+
+  // Mover el sol hacia abajo
+  add x14, x14, #1
+
+  // Reducir altura del sol cada 4 frames
+  and x3, x19, #3      // x3 = x19 % 4
+  cbnz x3, skip_sun_height
+  sub x18, x18, #1
+skip_sun_height:
+
+  // Repetir animación hasta 100 frames
+  cmp x19, #100
+  b.lt animloop
+
+  b endanim
+
+endanim:
+  // Setear GPIOs como entrada
+  ldr x9, =GPIO_BASE
+  str wzr, [x9, GPIO_GPFSEL0]
+
+  // Leer GPIO 2
+  ldr w10, [x9, GPIO_GPLEV0]
+  and w11, w10, 0b100
+  lsr w11, w11, 2  // w11 = 0 o 1 dependiendo del estado de GPIO 2
 
 InfLoop:
-	b InfLoop
+  b InfLoop

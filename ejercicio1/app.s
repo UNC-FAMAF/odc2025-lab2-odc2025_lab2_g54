@@ -5,6 +5,7 @@
 .globl main
 
 main:
+
   mov x20, x0          // x0 contiene framebuffer
 
   // Llenar pantalla con degradado

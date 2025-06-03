@@ -1,0 +1,8 @@
+.include "color.s"
+.include "constants.s"
+.include "utils.s"
+.include "shapes/elipse.s"
+.include "shapes/fill.s"
+.include "shapes/square.s"
+.include "shapes/star.s"
+.include "shapes/font.s"
