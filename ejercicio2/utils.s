@@ -34,30 +34,54 @@ rand:
   ret
 
 // x0 = centisegundos (1/100 de segundo)
-// Mejorado para mayor fluidez y precisión
 delay:
-    stp     x0, x1, [sp, #-16]!   // Guardar registros
-    stp     x2, x3, [sp, #-16]!   // Guardar registros adicionales
+  stp     x0, x1, [sp, #-16]!   // Guardar registros
+  stp     x2, x3, [sp, #-16]!   // Guardar registros adicionales
 
-    // Calcular ciclos totales de espera
-    // Asumiendo un CPU de ~1GHz: 1 centisegundo = 10,000,000 ciclos
-    mov     x1, #10000             // Base para centisegundos
-    mul     x1, x0, x1             // x1 = centisegundos * 10,000
-    lsl     x1, x1, #10            // x1 = x1 * 1024 (~10,240,000 ciclos por centisegundo)
+  // Calcular ciclos totales de espera
+  // Asumiendo un CPU de ~1GHz: 1 centisegundo = 10,000,000 ciclos
+  mov     x1, #10000             // Base para centisegundos
+  mul     x1, x0, x1             // x1 = centisegundos * 10,000
+  lsl     x1, x1, #10            // x1 = x1 * 1024 (~10,240,000 ciclos por centisegundo)
 
-    // Bucle principal de espera
-    // Usamos 4 instrucciones por iteración para mejor granularidad
-    lsr     x1, x1, #2             // Dividir entre 4 (4 instrucciones por ciclo)
+  // Bucle principal de espera
+  // Usamos 4 instrucciones por iteración para mejor granularidad
+  lsr     x1, x1, #2             // Dividir entre 4 (4 instrucciones por ciclo)
 
-    // Bucle optimizado
-    mov     x2, #0                 // Contador interno 1
-    mov     x3, #0                 // Contador interno 2
+  // Bucle optimizado
+  mov     x2, #0                 // Contador interno 1
+  mov     x3, #0                 // Contador interno 2
 .delay_loop:
-    add     x2, x2, #1             // 1 ciclo
-    cmp     x2, x1                 // 1 ciclo
-    b.lo    .delay_loop            // 2 ciclos (3 si se toma el salto)
+  add     x2, x2, #1             // 1 ciclo
+  cmp     x2, x1                 // 1 ciclo
+  b.lo    .delay_loop            // 2 ciclos (3 si se toma el salto)
 
-    // Restaurar registros
-    ldp     x2, x3, [sp], #16
-    ldp     x0, x1, [sp], #16
-    ret
+  // Restaurar registros
+  ldp     x2, x3, [sp], #16
+  ldp     x0, x1, [sp], #16
+  ret
+
+
+// x1 = dirección de BackFB
+// x2 = dirección de framebuffer
+render:
+  stp x1, x2, [sp, #-16]!   // Push x1 y x2
+  stp x3, x4, [sp, #-16]!   // Push x3 y x4
+
+  // Calcular cantidad de palabras (pixeles) a copiar
+  ldr x4, =307200
+
+render_loop:
+  cbz x4, render_done       // Si contador es 0, salir
+
+  ldr w3, [x1], #4          // Leer 4 bytes de BackFB y avanzar
+  str w3, [x2], #4          // Escribir en framebuffer y avanzar
+
+  sub x4, x4, #1            // Decrementar contador
+  b render_loop
+
+render_done:
+  // Restaurar registros desde el stack
+  ldp x3, x4, [sp], #16     // Pop x3 y x4
+  ldp x1, x2, [sp], #16     // Pop x1 y x2
+  ret

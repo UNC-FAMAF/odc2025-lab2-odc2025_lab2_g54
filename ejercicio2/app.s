@@ -19,14 +19,18 @@ main:
   ldr w22, =BLUEGRAY              // color del agua en movimiento (32 bits)
 
 animloop:
+  mov x1, x21
+  mov x2, x20
+  bl render
+
   // Llenar pantalla con degradado
-  mov x0, x20
+  mov x0, x21
   mov w1, w12
   mov w2, w13
   bl fillscreen_gradient_color_to_color
 
   // Dibujar sol (dos círculos concéntricos para efecto)
-  mov x0, x20
+  mov x0, x21
   ldr w1, =SUNSET_PEACH
   mov x2, #320
   mov x3, x14
@@ -36,7 +40,7 @@ animloop:
   mov w8, #0
   bl drawellipse
 
-  mov x0, x20
+  mov x0, x21
   ldr w1, =SUNGLOW
   mov x2, #320
   mov x3, x14
@@ -47,7 +51,7 @@ animloop:
   bl drawellipse
 
   // Mar con degradado
-  mov x0, x20
+  mov x0, x21
   mov w1, w15
   mov w2, w16
   mov x3, #0
@@ -57,7 +61,7 @@ animloop:
   bl drawsquare_gradient
 
   // movimiento del agua
-  mov x0, x20
+  mov x0, x21
   mov w1, w22
   mov x2, #0
   mov x3, #260
@@ -67,7 +71,7 @@ animloop:
   bl drawstars
 
   // Reflejo del sol
-  mov x0, x20
+  mov x0, x21
   mov w1, w17
   mov x2, #320
   mov x3, #275
@@ -78,7 +82,7 @@ animloop:
   bl drawellipse
 
   // Texto "ODC2025"
-  mov x0, x20
+  mov x0, x21
   ldr w1, =SNOW
 
   mov x2, #150
@@ -156,11 +160,11 @@ skip_sun_height:
   add x19, x19, #1
 
   // Pequeño delay entre frames
-  mov x0, #40
+  mov x0, #10
   bl delay
 
   // Repetir animación hasta 100 frames
-  cmp x19, #100
+  cmp x19, #120
   b.lt animloop
 
   b endanim
