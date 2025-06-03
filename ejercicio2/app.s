@@ -6,6 +6,7 @@
 
 main:
   mov x20, x0          // x0 contiene framebuffer
+  adr x21, BackFB      // x21 apunta al framebuffer de fondo
   mov x19, #0          // contador de fotogramas
 
   ldr w12, =TWILIGHT_PURPLE        // color base (32 bits)
@@ -15,7 +16,7 @@ main:
   ldr w16, =SEA_DEEP               // color de ajuste del mar (32 bits)
   ldr w17, =SUNREFLECTION          // color del reflejo del sol (32 bits)
   mov x18, #20                     // altura del sol (radio y)
-  ldr w21, =BLUEGRAY              // color del agua en movimiento (32 bits)
+  ldr w22, =BLUEGRAY              // color del agua en movimiento (32 bits)
 
 animloop:
   // Llenar pantalla con degradado
@@ -57,7 +58,7 @@ animloop:
 
   // movimiento del agua
   mov x0, x20
-  mov w1, w21
+  mov w1, w22
   mov x2, #0
   mov x3, #260
   mov x4, #640
@@ -136,10 +137,10 @@ animloop:
   bl adjust_color_brightness
   mov w17, w0
 
-  mov w0, w21
+  mov w0, w22
   mov w1, #126
   bl adjust_color_brightness
-  mov w21, w0
+  mov w22, w0
 
 
   // Mover el sol hacia abajo
