@@ -18,12 +18,12 @@
 .equ TEAL,           0xFF008080
 .equ PINK,           0xFFFFC0CB
 .equ MINT,           0xFF98FF98
-.equ SEA, 0xFF4682B4
-.equ SEA_LIGHT, 0xFF5CA0C9
-.equ SEA_DEEP, 0xFF2B557F
-.equ SKY_LIGHT, 0xFFC0D9F9
-.equ SKY_MEDIUM, 0xFF7AB8D6
-.equ SEA_DARK, 0xFF0F2D45
+.equ SEA,            0xFF4682B4
+.equ SEA_LIGHT,      0xFF5CA0C9
+.equ SEA_DEEP,       0xFF2B557F
+.equ SKY_LIGHT,      0xFFC0D9F9
+.equ SKY_MEDIUM,     0xFF7AB8D6
+.equ SEA_DARK,       0xFF0F2D45
 
 
 .equ SUNGLOW,        0xFFFFCC33
@@ -39,8 +39,8 @@
 .equ SALMON,         0xFFFA8072
 .equ MANGO,          0xFFFFC324
 .equ BLOOD_ORANGE,   0xFFFF3F34
-.equ TWILIGHT_PURPLE, 0xFF6A0DAD
-.equ SUNSET_PEACH,    0xFFFF8C42
+.equ TWILIGHT_PURPLE,0xFF6A0DAD
+.equ SUNSET_PEACH,   0xFFFF8C42
 
 
 // Ajusta el brillo de un color ARGB8888.
