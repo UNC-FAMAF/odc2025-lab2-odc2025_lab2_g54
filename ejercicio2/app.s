@@ -1,6 +1,5 @@
 .include "constants.s"
 .include "shapes.s"
-.include "letters.s"
 
 .globl main
 
@@ -17,6 +16,8 @@ main:
   ldr w17, =SUNREFLECTION          // color del reflejo del sol (32 bits)
   mov x18, #20                     // altura del sol (radio y)
   ldr w22, =BLUEGRAY              // color del agua en movimiento (32 bits)
+
+  b outroanim
 
 animloop:
   mov x1, x21
@@ -85,35 +86,9 @@ animloop:
   mov x0, x21
   ldr w1, =SNOW
 
-  mov x2, #150
+  mov x2, #220
   mov x3, #50
-  ldr x4, =O_font
-  mov x5, #4
-  bl drawchar_direct
-
-  mov x2, #200
-  ldr x4, =D_font
-  bl drawchar_direct
-
-  mov x2, #250
-  ldr x4, =C_font
-  bl drawchar_direct
-
-  mov x2, #300
-  ldr x4, =Two_font
-  bl drawchar_direct
-
-  mov x2, #350
-  ldr x4, =Zero_font
-  bl drawchar_direct
-
-  mov x2, #400
-  ldr x4, =Two2_font
-  bl drawchar_direct
-
-  mov x2, #450
-  ldr x4, =Five_font
-  bl drawchar_direct
+  bl draw_odc2025
 
   // Atenuar colores
   mov w0, w12
@@ -188,35 +163,9 @@ animloop_outro:
   mov x0, x21
   ldr w1, =SNOW
 
-  mov x2, #150
+  mov x2, #220
   mov x3, x13
-  ldr x4, =O_font
-  mov x5, #4
-  bl drawchar_direct
-
-  mov x2, #200
-  ldr x4, =D_font
-  bl drawchar_direct
-
-  mov x2, #250
-  ldr x4, =C_font
-  bl drawchar_direct
-
-  mov x2, #300
-  ldr x4, =Two_font
-  bl drawchar_direct
-
-  mov x2, #350
-  ldr x4, =Zero_font
-  bl drawchar_direct
-
-  mov x2, #400
-  ldr x4, =Two2_font
-  bl drawchar_direct
-
-  mov x2, #450
-  ldr x4, =Five_font
-  bl drawchar_direct
+  bl draw_odc2025
 
   mov x0, #5
   bl delay
@@ -245,35 +194,9 @@ circle_growing:
   mov x0, x21
   ldr w1, =SNOW
 
-  mov x2, #150
+  mov x2, #220
   mov x3, x13
-  ldr x4, =O_font
-  mov x5, #4
-  bl drawchar_direct
-
-  mov x2, #200
-  ldr x4, =D_font
-  bl drawchar_direct
-
-  mov x2, #250
-  ldr x4, =C_font
-  bl drawchar_direct
-
-  mov x2, #300
-  ldr x4, =Two_font
-  bl drawchar_direct
-
-  mov x2, #350
-  ldr x4, =Zero_font
-  bl drawchar_direct
-
-  mov x2, #400
-  ldr x4, =Two2_font
-  bl drawchar_direct
-
-  mov x2, #450
-  ldr x4, =Five_font
-  bl drawchar_direct
+  bl draw_odc2025
 
   mov x0, #0
   bl delay
@@ -304,58 +227,14 @@ legv8_falling:
   mov x0, x21
   ldr w1, =SNOW
 
-  mov x2, #150
+  mov x2, #220
   mov x3, x13
-  ldr x4, =O_font
-  mov x5, #4
-  bl drawchar_direct
-
-  mov x2, #200
-  ldr x4, =D_font
-  bl drawchar_direct
-
-  mov x2, #250
-  ldr x4, =C_font
-  bl drawchar_direct
-
-  mov x2, #300
-  ldr x4, =Two_font
-  bl drawchar_direct
-
-  mov x2, #350
-  ldr x4, =Zero_font
-  bl drawchar_direct
-
-  mov x2, #400
-  ldr x4, =Two2_font
-  bl drawchar_direct
-
-  mov x2, #450
-  ldr x4, =Five_font
-  bl drawchar_direct
+  bl draw_odc2025
 
   // Dibuja "LegV8" cayendo
   mov x2, #180
   mov x3, x14
-  ldr x4, =L_font
-  mov x5, #4
-  bl drawchar_direct
-
-  mov x2, #230
-  ldr x4, =E_font
-  bl drawchar_direct
-
-  mov x2, #280
-  ldr x4, =G_font
-  bl drawchar_direct
-
-  mov x2, #330
-  ldr x4, =V_font
-  bl drawchar_direct
-
-  mov x2, #380
-  ldr x4, =Eight_font
-  bl drawchar_direct
+  bl draw_legv8
 
   mov x0, #2
   bl delay
