@@ -1,82 +1,232 @@
 // x0 = framebuffer
 // w1 = color
-// x2 = x
-// x3 = y
-// x4 = dirección de font (8 bytes)
-// x5 = escala (entero)
+// x2 = x_start (X)
+// x3 = y_start (Y)
+draw_odc2025:
+  sub sp, sp, #32
+  stp x9, x10, [sp, #0]
+  stp x29, x30, [sp, #16]
 
-drawchar_direct:
-  sub sp, sp, #64
-  stp x6, x7, [sp, #0]
-  stp x8, x9, [sp, #16]
-  stp x10, x11, [sp, #32]
-  stp x12, x13, [sp, #48]
+  mov x9, x2        // guardar x inicial
+  mov x10, x3       // y inicial
 
-  mov x6, #0                  // fila (0–7)
-.row_loop:
-  cmp x6, #8
-  bge .done
+  // Draw O
+  mov x2, x9
+  mov x3, x10
+  bl draw_o
+  add x9, x9, #28
 
-  ldrb w7, [x4, x6]           // byte de la fila
-  mov x8, #0                  // columna (0–7)
-.col_loop:
-  cmp x8, #8
-  bge .next_row
+  // Draw D
+  mov x2, x9
+  mov x3, x10
+  bl draw_d
+  add x9, x9, #28
 
-  // Comprobar bit más significativo a la izquierda
-  mov w9, w7
-  mov w10, w9
-  lsl w10, w10, w8
-  tst w10, #0x80
-  beq .next_col
+  // Draw C
+  mov x2, x9
+  mov x3, x10
+  bl draw_c
+  add x9, x9, #28
 
-  // Si el bit está activo, dibujar un bloque escala x escala
-  mov x10, #0                // fila dentro del bloque
-.scale_y_loop:
-  cmp x10, x5
-  bge .next_col
+  // Draw 2
+  mov x2, x9
+  mov x3, x10
+  bl draw_2
+  add x9, x9, #28
 
-  mov x11, #0                // columna dentro del bloque
-.scale_x_loop:
-  cmp x11, x5
-  bge .next_scale_y
+  // Draw 0
+  mov x2, x9
+  mov x3, x10
+  bl draw_0
+  add x9, x9, #28
 
-  // calcular dirección de píxel
-  ldr x12, =SCREEN_WIDTH
-  mul x13, x5, x6            // y_char * scale
-  add x13, x13, x3           // y base
-  add x13, x13, x10          // + desplazamiento interno
+  // Draw 2
+  mov x2, x9
+  mov x3, x10
+  bl draw_2
+  add x9, x9, #28
 
-  mul x14, x5, x8            // x_char * scale
-  add x14, x14, x2           // x base
-  add x14, x14, x11          // + desplazamiento interno
+  // Draw 5
+  mov x2, x9
+  mov x3, x10
+  bl draw_5
 
-  mul x13, x13, x12          // y * width
-  add x13, x13, x14          // + x
-  lsl x13, x13, #2           // * 4 bytes por píxel
-  add x13, x0, x13           // framebuffer + offset
+  ldp x9, x10, [sp, #0]
+  ldp x29, x30, [sp, #16]
+  add sp, sp, #32
+  ret
 
-  str w1, [x13]              // escribir color
+// =============================
+// DRAW LETTER: O
+// =============================
+draw_o:
+  sub sp, sp, #16
+  str x30, [sp]
 
-  add x11, x11, #1
-  b .scale_x_loop
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // top
 
-.next_scale_y:
-  add x10, x10, #1
-  b .scale_y_loop
+  add x3, x3, #24
+  bl drawsquare            // bottom
 
-.next_col:
-  add x8, x8, #1
-  b .col_loop
+  sub x3, x3, #24
+  mov x4, #4
+  mov x5, #28
+  bl drawsquare            // left
 
-.next_row:
-  add x6, x6, #1
-  b .row_loop
+  add x2, x2, #16
+  bl drawsquare            // right
 
-.done:
-  ldp x6, x7, [sp, #0]
-  ldp x8, x9, [sp, #16]
-  ldp x10, x11, [sp, #32]
-  ldp x12, x13, [sp, #48]
-  add sp, sp, #64
+  ldr x30, [sp]
+  add sp, sp, #16
+  ret
+
+// =============================
+// DRAW LETTER: D
+// =============================
+draw_d:
+  sub sp, sp, #16
+  str x30, [sp]
+
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // top
+
+  add x3, x3, #24
+  bl drawsquare            // bottom
+
+  sub x3, x3, #24
+  mov x4, #4
+  mov x5, #28
+  bl drawsquare            // left
+
+  add x2, x2, #20
+  add x3, x3, #4
+  mov x5, #20
+  bl drawsquare            // right curve
+
+  ldr x30, [sp]
+  add sp, sp, #16
+  ret
+
+// =============================
+// DRAW LETTER: C
+// =============================
+draw_c:
+  sub sp, sp, #16
+  str x30, [sp]
+
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // top
+
+  add x3, x3, #24
+  bl drawsquare            // bottom
+
+  sub x3, x3, #24
+  mov x4, #4
+  mov x5, #28
+  bl drawsquare            // left only
+
+  ldr x30, [sp]
+  add sp, sp, #16
+  ret
+
+// =============================
+// DRAW NUMBER: 2
+// =============================
+draw_2:
+  sub sp, sp, #16
+  str x30, [sp]
+
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // top
+
+  add x2, x2, #16
+  add x3, x3, #4
+  mov x4, #4
+  mov x5, #8
+  bl drawsquare            // top right
+
+  sub x2, x2, #16
+  add x3, x3, #8
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // middle
+
+  mov x4, #4
+  mov x5, #12
+  bl drawsquare            // bottom left
+
+  add x3, x3, #12
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // bottom
+
+  ldr x30, [sp]
+  add sp, sp, #16
+  ret
+
+// =============================
+// DRAW NUMBER: 0
+// =============================
+draw_0:
+  sub sp, sp, #16
+  str x30, [sp]
+
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // top
+
+  add x3, x3, #24
+  bl drawsquare            // bottom
+
+  sub x3, x3, #24
+  mov x4, #4
+  mov x5, #28
+  bl drawsquare            // left
+
+  add x2, x2, #16
+  bl drawsquare            // right
+
+  ldr x30, [sp]
+  add sp, sp, #16
+  ret
+
+// =============================
+// DRAW NUMBER: 5
+// =============================
+draw_5:
+  sub sp, sp, #16
+  str x30, [sp]
+
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // top
+
+  mov x4, #4
+  mov x5, #12
+  bl drawsquare            // top left
+
+  add x3, x3, #12
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // middle
+
+  add x2, x2, #16
+  add x3, x3, #4
+  mov x4, #4
+  mov x5, #8
+  bl drawsquare            // bottom right
+
+  sub x2, x2, #16
+  add x3, x3, #8
+  mov x4, #20
+  mov x5, #4
+  bl drawsquare            // bottom
+
+  ldr x30, [sp]
+  add sp, sp, #16
   ret
