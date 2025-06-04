@@ -1,8 +1,8 @@
 Nombre y apellido
 Integrante 1: Fadel Jachuf
 Integrante 2: Ayala Garcia Luis Facundo
-Integrante 3:
-Integrante 4:
+Integrante 3: Felipe Rayano Fernández
+Integrante 4: Axel Lissandro Bosque
 
 Descripción ejercicio 1:
 Hicimos un atardecer en el cual las principales funciones que programamos son:
