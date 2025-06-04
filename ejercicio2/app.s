@@ -17,8 +17,6 @@ main:
   mov x18, #20                     // altura del sol (radio y)
   ldr w22, =BLUEGRAY              // color del agua en movimiento (32 bits)
 
-  b outroanim
-
 animloop:
   mov x1, x21
   mov x2, x20
