@@ -22,5 +22,4 @@ Al final, se muestra un logo animado de **LEGv8**.
 - **UBFX:** extrae bits útiles (A, R, G, B) de colores.  
 - **CSEL:** elige entre dos valores según condición, evitando saltos.  
 - **TST:** compara bits sin guardar el resultado, solo modifica banderas.  
-- **ADR:** obtiene direcciones relativas, usada para el framebuffer auxiliar  
 - **.include:** permite modularizar el código y mejorar la organización.
