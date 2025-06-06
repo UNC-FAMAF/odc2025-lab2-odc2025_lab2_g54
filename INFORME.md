@@ -13,7 +13,7 @@ Creamos una escena de atardecer en el mar usando funciones como:
 
 ### **Descripción ejercicio 2:**  
 Convertimos constantes en registros y actualizamos sus valores en cada fotograma.  
-Agregamos movimiento al sol y cambios dinámicos en el reflejo y los colores.  
+Agregamos movimiento al sol, el barco y cambios dinámicos en el reflejo y los colores.  
 Incorporamos una función `delay` para pausar entre cuadros.  
 Al final, se muestra un logo animado de **LEGv8**.
 
