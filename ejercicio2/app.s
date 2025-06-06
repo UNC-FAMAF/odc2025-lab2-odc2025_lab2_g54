@@ -5,7 +5,6 @@
 
 main:
   mov x20, x0          // x0 contiene framebuffer
-  adr x21, BackFB      // x21 apunta al framebuffer de fondo
   mov x19, #0          // contador de fotogramas
 
   ldr w12, =TWILIGHT_PURPLE        // color base (32 bits)
@@ -22,18 +21,18 @@ main:
   ldr w26, =SEA_DARK              // sombra del barco
 
 animloop:
-  mov x1, x21
+  mov x1, x20
   mov x2, x20
   bl render
 
   // Llenar pantalla con degradado
-  mov x0, x21
+  mov x0, x20
   mov w1, w12
   mov w2, w13
   bl fillscreen_gradient_color_to_color
 
   // Dibujar sol (dos círculos concéntricos para efecto)
-  mov x0, x21
+  mov x0, x20
   ldr w1, =SUNSET_PEACH
   mov x2, #320
   mov x3, x14
@@ -43,7 +42,7 @@ animloop:
   mov w8, #0
   bl drawellipse
 
-  mov x0, x21
+  mov x0, x20
   ldr w1, =SUNGLOW
   mov x2, #320
   mov x3, x14
@@ -54,7 +53,7 @@ animloop:
   bl drawellipse
 
   // Mar con degradado
-  mov x0, x21
+  mov x0, x20
   mov w1, w15
   mov w2, w16
   mov x3, #0
@@ -64,7 +63,7 @@ animloop:
   bl drawsquare_gradient
 
   // movimiento del agua
-  mov x0, x21
+  mov x0, x20
   mov w1, w22
   mov x2, #0
   mov x3, #260
@@ -74,7 +73,7 @@ animloop:
   bl drawstars
 
   // Reflejo del sol
-  mov x0, x21
+  mov x0, x20
   mov w1, w17
   mov x2, #320
   mov x3, #275
@@ -84,7 +83,7 @@ animloop:
   mov w8, #0
   bl drawellipse
 
-  mov x0, x21
+  mov x0, x20
   mov w1, w23
   mov w2, w24
   mov x3, x25
@@ -93,7 +92,7 @@ animloop:
   bl drawship
 
   // Texto "ODC2025"
-  mov x0, x21
+  mov x0, x20
   ldr w1, =SNOW
 
   mov x2, #220
@@ -179,15 +178,15 @@ outroanim:
   mov x14, #0          // Posición de "LegV8" cayendo
 
 animloop_outro:
-  mov x1, x21
+  mov x1, x20
   mov x2, x20
   bl render
 
-  mov x0, x21
+  mov x0, x20
   ldr w1, =BLACK
   bl fillscreen
 
-  mov x0, x21
+  mov x0, x20
   ldr w1, =SNOW
 
   mov x2, #220
@@ -204,11 +203,11 @@ animloop_outro:
   b circle_growing
 
 circle_growing:
-  mov x1, x21
+  mov x1, x20
   mov x2, x20
   bl render
 
-  mov x0, x21
+  mov x0, x20
   ldr w1, =SUNGLOW
   mov x2, #320
   mov x3, #240
@@ -218,7 +217,7 @@ circle_growing:
   mov w8, #0
   bl drawellipse
 
-  mov x0, x21
+  mov x0, x20
   ldr w1, =SNOW
 
   mov x2, #220
@@ -235,12 +234,12 @@ circle_growing:
   b legv8_falling
 
 legv8_falling:
-  mov x1, x21
+  mov x1, x20
   mov x2, x20
   bl render
 
   // Dibujar el círculo lleno
-  mov x0, x21
+  mov x0, x20
   ldr w1, =SUNGLOW
   mov x2, #320
   mov x3, #240
@@ -251,7 +250,7 @@ legv8_falling:
   bl drawellipse
 
   // Dibuja "ODC 2025"
-  mov x0, x21
+  mov x0, x20
   ldr w1, =SNOW
 
   mov x2, #220
