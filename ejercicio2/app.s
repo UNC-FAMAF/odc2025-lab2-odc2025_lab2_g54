@@ -16,6 +16,10 @@ main:
   ldr w17, =SUNREFLECTION          // color del reflejo del sol (32 bits)
   mov x18, #20                     // altura del sol (radio y)
   ldr w22, =BLUEGRAY              // color del agua en movimiento (32 bits)
+  ldr w23, =RED_ALERT              // color de la bandera (32 bits)
+  ldr w24, =WOOD_BROWN             // color del barco (32 bits)
+  mov x25, #200                   // posición inicial del barco
+  ldr w26, =SEA_DARK              // sombra del barco
 
 animloop:
   mov x1, x21
@@ -80,6 +84,14 @@ animloop:
   mov w8, #0
   bl drawellipse
 
+  mov x0, x21
+  mov w1, w23
+  mov w2, w24
+  mov x3, x25
+  mov x4, #250
+  mov w5, w26
+  bl drawship
+
   // Texto "ODC2025"
   mov x0, x21
   ldr w1, =SNOW
@@ -119,9 +131,26 @@ animloop:
   bl adjust_color_brightness
   mov w22, w0
 
+  mov w0, w23
+  mov w1, #126
+  bl adjust_color_brightness
+  mov w23, w0
+
+  mov w0, w24
+  mov w1, #126
+  bl adjust_color_brightness
+  mov w24, w0
+
+  mov w0, w26
+  mov w1, #126
+  bl adjust_color_brightness
+  mov w26, w0
 
   // Mover el sol hacia abajo
   add x14, x14, #1
+
+  // Mover el barco hacia la derecha
+  add x25, x25, #1
 
   // Reducir altura del sol cada 4 frames
   and x3, x19, #3      // x3 = x19 % 4
