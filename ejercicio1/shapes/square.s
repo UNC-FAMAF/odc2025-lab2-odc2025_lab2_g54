@@ -50,11 +50,17 @@ drawsquare:
 // x5 = ancho
 // x6 = alto
 drawsquare_gradient:
-  sub sp, sp, #64
+  sub sp, sp, #160
   stp x7, x8, [sp, #0]
   stp x9, x10, [sp, #16]
   stp x11, x12, [sp, #32]
   stp x13, x14, [sp, #48]
+  stp x15, x16, [sp, #64]
+  stp x17, x18, [sp, #80]
+  stp x19, x21, [sp, #96]
+  stp x22, x23, [sp, #112]
+  stp x24, x25, [sp, #128]
+  stp x26, x27, [sp, #144]
 
   // Separar componentes de inicio
   ubfx w10, w1, #16, #8   // R1
@@ -147,5 +153,11 @@ drawsquare_gradient:
   ldp x9, x10, [sp, #16]
   ldp x11, x12, [sp, #32]
   ldp x13, x14, [sp, #48]
-  add sp, sp, #64
+  ldp x15, x16, [sp, #64]
+  ldp x17, x18, [sp, #80]
+  ldp x19, x21, [sp, #96]
+  ldp x22, x23, [sp, #112]
+  ldp x24, x25, [sp, #128]
+  ldp x26, x27, [sp, #144]
+  add sp, sp, #160
   ret

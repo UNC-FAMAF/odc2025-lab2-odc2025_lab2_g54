@@ -79,6 +79,14 @@ main:
   mov w8, #0                  // grosor ignorado
   bl drawellipse
 
+  mov x0, x20
+  ldr w1, =RED_ALERT
+  ldr w2, =WOOD_BROWN
+  mov x3, #200
+  mov x4, #250
+  ldr w5, =SEA_DARK
+  bl drawship
+
   mov x0, x20                // destino
   ldr w1, =SNOW         // color ARGB
 

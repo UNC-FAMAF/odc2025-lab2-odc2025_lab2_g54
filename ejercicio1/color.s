@@ -40,6 +40,8 @@
 .equ BLOOD_ORANGE,   0xFFFF3F34
 .equ TWILIGHT_PURPLE, 0xFF6A0DAD
 .equ SUNSET_PEACH,    0xFFFF8C42
+.equ WOOD_BROWN,     0xFF8B4513
+
 
 
 // Ajusta el brillo de un color ARGB8888.
